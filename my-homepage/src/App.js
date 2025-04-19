@@ -4,20 +4,20 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>John Doe</h1>
-        <p className="title">Software Developer</p>
+        <h1>Hasan Abbasi</h1>
+        <p className="title">Senior Software Developer</p>
         <div className="social-links">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="mailto:john.doe@example.com">Email</a>
+          <a href="https://github.com/abbasihsn" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/abbasihsn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:abbasi.hsnn@gmail.com">Email</a>
         </div>
       </header>
       
       <section className="about">
         <h2>About Me</h2>
-        <p>
-          I'm a passionate software developer with experience in web development.
-          My skills include React, JavaScript, HTML, and CSS.
+        <p> 
+          I'm a full stack developer with a passion for building scalable and efficient systems. Also, I have a strong interest in AI and machine learning where my academic background is in Computer Vision and Machine Learning.
+          I have a decade of experience in software development and I'm always looking for new challenges and opportunities to learn and grow.
         </p>
       </section>
       
@@ -38,7 +38,7 @@ function App() {
       </section>
       
       <footer>
-        <p>© 2023 John Doe. All rights reserved.</p>
+        <p>© 2025 Hasan Abbasi. All rights reserved.</p>
       </footer>
     </div>
   );
