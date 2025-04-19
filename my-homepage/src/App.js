@@ -4,12 +4,20 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <div className="profile-image-container">
+          <img src="/profile-image.png" alt="Hasan Abbasi" className="profile-image" />
+        </div>
         <h1>Hasan Abbasi</h1>
         <p className="title">Senior Software Developer</p>
         <div className="social-links">
           <a href="https://github.com/abbasihsn" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/abbasihsn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a href="mailto:abbasi.hsnn@gmail.com">Email</a>
+          <a href="https://www.youtube.com/@TechWithHasanAbbasi?sub_confirmation=1" target="_blank" rel="noopener noreferrer" className="youtube-link">YouTube</a>
+        </div>
+        <div className="scroll-indicator">
+          <span>Scroll Down</span>
+          <div className="arrow"></div>
         </div>
       </header>
       
@@ -21,7 +29,7 @@ function App() {
         </p>
       </section>
       
-      <section className="projects">
+      {/* <section className="projects">
         <h2>Projects</h2>
         <div className="project-list">
           <div className="project">
@@ -35,7 +43,7 @@ function App() {
             <a href="https://github.com/username/project2" target="_blank" rel="noopener noreferrer">View Code</a>
           </div>
         </div>
-      </section>
+      </section> */}
       
       <footer>
         <p>© 2025 Hasan Abbasi. All rights reserved.</p>
