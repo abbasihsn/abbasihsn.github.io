@@ -1,6 +1,29 @@
 import './App.css';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const aboutSection = document.querySelector('.about');
+      if (aboutSection) {
+        const position = aboutSection.getBoundingClientRect();
+        console.log(position.top);
+        // If the section is in view
+        if (position.top < window.innerHeight - window.innerHeight*0.) {
+          setIsVisible(true);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Check initially in case section is already visible
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -21,15 +44,17 @@ function App() {
         </div>
       </header>
       
-      <section className="about">
-        <h2>About Me</h2>
-        <p> 
-          I'm a full stack developer with a passion for building scalable and efficient systems. Also, I have a strong interest in AI and machine learning where my academic background is in Computer Vision and Machine Learning.
-          I have a decade of experience in software development and I'm always looking for new challenges and opportunities to learn and grow.
-        </p>
+      <section className={`about ${isVisible ? 'visible' : ''}`}>
+        <div className="about-container">
+          <h2>About Me</h2>
+          <p> 
+            I'm a full stack developer with a passion for building scalable and efficient systems. Also, I have a strong interest in AI and machine learning where my academic background is in Computer Vision and Machine Learning.
+            I have a decade of experience in software development and I'm always looking for new challenges and opportunities to learn and grow.
+          </p>
+        </div>
       </section>
       
-      {/* <section className="projects">
+      <section className="projects">
         <h2>Projects</h2>
         <div className="project-list">
           <div className="project">
@@ -43,7 +68,7 @@ function App() {
             <a href="https://github.com/username/project2" target="_blank" rel="noopener noreferrer">View Code</a>
           </div>
         </div>
-      </section> */}
+      </section>
       
       <footer>
         <p>© 2025 Hasan Abbasi. All rights reserved.</p>
