@@ -1,8 +1,11 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import PianoQuiz from './components/PianoQuiz';
+import PatternLibrary from './components/PatternLibrary';
 
 function App() {
   const [isVisible, setIsVisible] = useState(false);
+  const isQuizRoute = typeof window !== 'undefined' && window.location.pathname.endsWith('/piano-quiz');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +26,28 @@ function App() {
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (isQuizRoute) {
+    return (
+      <div className="App">
+        <section className="piano-quiz">
+          <div className="about-container">
+            <h2>Piano Notes Quiz</h2>
+            <PianoQuiz />
+          </div>
+        </section>
+        <section className="pattern-library">
+          <div className="about-container">
+            <h2>Learn: All Patterns</h2>
+            <PatternLibrary />
+          </div>
+        </section>
+        <footer>
+          <p>© 2025 Hasan Abbasi. All rights reserved.</p>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="App">
@@ -54,7 +79,7 @@ function App() {
         </div>
       </section>
       
-      <section className="projects">
+      {/* <section className="projects">
         <h2>Projects</h2>
         <div className="project-list">
           <div className="project">
@@ -68,7 +93,7 @@ function App() {
             <a href="https://github.com/username/project2" target="_blank" rel="noopener noreferrer">View Code</a>
           </div>
         </div>
-      </section>
+      </section> */}
       
       <footer>
         <p>© 2025 Hasan Abbasi. All rights reserved.</p>
