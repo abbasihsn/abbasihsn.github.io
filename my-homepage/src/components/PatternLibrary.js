@@ -1,20 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
 import patternsData from '../data/patterns.json';
 
-const NOTE_NAMES = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si'];
-
-function buildNoteToUrlMap() {
-  const map = {};
-  NOTE_NAMES.forEach((name) => {
-    map[name] = `/artifacts/${name}.mp3`;
-  });
-  return map;
-}
-
 export default function PatternLibrary() {
   const [mode, setMode] = useState('4');
   const [isPlaying, setIsPlaying] = useState(false);
-  const noteToUrl = useMemo(() => buildNoteToUrlMap(), []);
   const audioRef = useRef(null);
   const cancelPlaybackRef = useRef(false);
 
@@ -37,59 +26,30 @@ export default function PatternLibrary() {
     setIsPlaying(false);
   }
 
-  async function playNote(name) {
-    return new Promise((resolve) => {
-      const audio = new Audio(noteToUrl[name]);
-      audioRef.current = audio;
-      try {
-        audio.currentTime = 0;
-      } catch (_e) {
-        // no-op
-      }
-      const timer = setTimeout(() => {
-        try {
-          audio.pause();
-        } catch (_e) {
-          // no-op
-        }
+  async function playPattern(pattern) {
+    if (!pattern || pattern.length === 0) return;
+    const filename = `${pattern.join('+')}.mp3`;
+    const audio = new Audio(`/artifacts/${filename}`);
+    audioRef.current = audio;
+    try {
+      audio.currentTime = 0;
+    } catch (_e) {
+      // no-op
+    }
+    await new Promise((resolve) => {
+      const handleEnded = () => {
+        audio.removeEventListener('ended', handleEnded);
         resolve();
-      }, 1000);
-      audio.play().catch(() => {
-        // ignore autoplay issue; timer will resolve anyway
-      });
-      // if playback is cancelled mid-note, resolve on next tick after pause
-      if (cancelPlaybackRef.current) {
-        clearTimeout(timer);
-        try {
-          audio.pause();
-        } catch (_e) {
-          // no-op
-        }
-        resolve();
-      }
+      };
+      audio.addEventListener('ended', handleEnded);
+      audio.play().catch(() => resolve());
     });
-  }
-
-  async function playSequence(sequence) {
-    if (!sequence || sequence.length === 0) {
-      return;
-    }
-    for (let i = 0; i < sequence.length; i += 1) {
-      if (cancelPlaybackRef.current) {
-        break;
-      }
-      // eslint-disable-next-line no-await-in-loop
-      await playNote(sequence[i]); // ~1s per note, no extra gap
-      if (cancelPlaybackRef.current) {
-        break;
-      }
-    }
   }
 
   async function handlePlay(pattern) {
     cancelPlaybackRef.current = false;
     setIsPlaying(true);
-    await playSequence(pattern);
+    await playPattern(pattern);
     setIsPlaying(false);
   }
 
@@ -102,7 +62,7 @@ export default function PatternLibrary() {
     for (let i = 0; i < list.length; i += 1) {
       if (cancelPlaybackRef.current) break;
       // eslint-disable-next-line no-await-in-loop
-      await playSequence(list[i]);
+      await playPattern(list[i]);
       if (cancelPlaybackRef.current) break;
     }
     setIsPlaying(false);

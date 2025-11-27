@@ -36,7 +36,6 @@ export default function PianoQuiz() {
 
   const noteToUrl = useMemo(() => buildNoteToUrlMap(), []);
   const audioRef = useRef(null);
-  const cancelPlaybackRef = useRef(false);
   const referenceAudioRef = useRef(null);
 
   const availableModes = useMemo(() => {
@@ -50,7 +49,11 @@ export default function PianoQuiz() {
       return undefined;
     }
     // Prepare a fresh answer input based on selected mode
-    setUserAnswer(new Array(Number(mode)).fill(''));
+    if (String(mode) === '2') {
+      setUserAnswer(['do', '']);
+    } else {
+      setUserAnswer(new Array(Number(mode)).fill(''));
+    }
     // eslint-disable-next-line consistent-return
     return () => {
       if (audioRef.current) {
@@ -69,48 +72,29 @@ export default function PianoQuiz() {
     return list[idx];
   }
 
-  async function playNote(name) {
-    return new Promise((resolve) => {
-      const audio = new Audio(noteToUrl[name]);
-      audioRef.current = audio;
-      // Ensure we start from the beginning
-      try {
-        audio.currentTime = 0;
-      } catch (_e) {
-        // no-op
-      }
-      // Play and stop after 1 second regardless of file length
-      const stopAfter = setTimeout(() => {
-        try {
-          audio.pause();
-        } catch (_e) {
-          // no-op
-        }
+  async function playPattern(pattern) {
+    if (!pattern || pattern.length === 0) return;
+    // Build filename like do+re+mi.mp3
+    const filename = `${pattern.join('+')}.mp3`;
+    const audio = new Audio(`/artifacts/${filename}`);
+    audioRef.current = audio;
+    try {
+      audio.currentTime = 0;
+    } catch (_e) {
+      // no-op
+    }
+    setIsPlaying(true);
+    await new Promise((resolve) => {
+      const handleEnded = () => {
+        audio.removeEventListener('ended', handleEnded);
         resolve();
-      }, 1000);
+      };
+      audio.addEventListener('ended', handleEnded);
       audio.play().catch(() => {
-        // If autoplay is blocked, still keep the 1s timing window
-        // We already scheduled stopAfter, so just let it resolve
+        // If autoplay blocked, resolve to avoid hanging UI
+        resolve();
       });
     });
-  }
-
-  async function playSequence(sequence) {
-    if (!sequence || sequence.length === 0) {
-      return;
-    }
-    cancelPlaybackRef.current = false;
-    setIsPlaying(true);
-    for (let i = 0; i < sequence.length; i += 1) {
-      if (cancelPlaybackRef.current) {
-        break;
-      }
-      // eslint-disable-next-line no-await-in-loop
-      await playNote(sequence[i]); // exactly ~1s per note, no extra gap
-      if (cancelPlaybackRef.current) {
-        break;
-      }
-    }
     setIsPlaying(false);
   }
 
@@ -146,7 +130,6 @@ export default function PianoQuiz() {
 
   function stopQuiz() {
     // Stop only playback, keep quiz state
-    cancelPlaybackRef.current = true;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -191,7 +174,11 @@ export default function PianoQuiz() {
     setCurrentIndex(nextIndex);
     setHasSubmitted(false);
     setFeedback('');
-    setUserAnswer(new Array(Number(mode)).fill(''));
+    if (String(mode) === '2') {
+      setUserAnswer(['do', '']);
+    } else {
+      setUserAnswer(new Array(Number(mode)).fill(''));
+    }
     setCurrentPattern(pickRandomPattern());
   }
 
@@ -244,7 +231,7 @@ export default function PianoQuiz() {
           </div>
 
           <div style={{ marginTop: 12, marginBottom: 12 }}>
-            <button onClick={() => playSequence(currentPattern)} disabled={isPlaying}>
+            <button onClick={() => playPattern(currentPattern)} disabled={isPlaying}>
               {isPlaying ? 'Playing...' : 'Play Sequence'}
             </button>
             <button onClick={stopQuiz} style={{ marginLeft: 8 }}>
@@ -253,19 +240,29 @@ export default function PianoQuiz() {
           </div>
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            {userAnswer.map((value, idx) => (
-              <select
-                key={idx}
-                value={value}
-                onChange={(e) => onAnswerChange(idx, e.target.value)}
-                disabled={hasSubmitted}
-              >
-                <option value="">?</option>
-                {noteOptions.map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            ))}
+            {userAnswer.map((value, idx) => {
+              const isFixedDo = String(mode) === '2' && idx === 0;
+              if (isFixedDo) {
+                return (
+                  <select key={idx} value="do" disabled>
+                    <option value="do">do</option>
+                  </select>
+                );
+              }
+              return (
+                <select
+                  key={idx}
+                  value={value}
+                  onChange={(e) => onAnswerChange(idx, e.target.value)}
+                  disabled={hasSubmitted}
+                >
+                  <option value="">?</option>
+                  {noteOptions.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              );
+            })}
             <button
               onClick={submitAnswer}
               disabled={!isAnswerComplete() || hasSubmitted}
