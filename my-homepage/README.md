@@ -1,6 +1,59 @@
-# Getting Started with Create React App
+# Hasan Abbasi - Personal Homepage
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Personal portfolio website built with React, deployed via Docker with nginx.
+
+**Live URL:** [hasanabbasi.ca](https://hasanabbasi.ca)
+
+---
+
+## Deployment
+
+This project runs in a Docker container with nginx serving the production build.
+
+### Quick Deploy (Rebuild & Restart)
+
+```bash
+cd /home/abbasihsn/abbasihsn.github.io/my-homepage
+docker stop my-homepage && docker rm my-homepage && docker build -t my-homepage . && docker run -d --name my-homepage -p 3001:80 --restart unless-stopped my-homepage
+```
+
+### Step-by-Step Deployment
+
+1. **Stop the existing container:**
+   ```bash
+   docker stop my-homepage
+   docker rm my-homepage
+   ```
+
+2. **Build the new image:**
+   ```bash
+   docker build -t my-homepage .
+   ```
+
+3. **Run the container:**
+   ```bash
+   docker run -d --name my-homepage -p 3001:80 --restart unless-stopped my-homepage
+   ```
+
+### Check Status
+
+```bash
+docker ps --filter "name=my-homepage"
+```
+
+### View Logs
+
+```bash
+docker logs my-homepage
+```
+
+### Architecture
+
+- **Port 3001** on host maps to **port 80** inside the container
+- nginx serves the React production build
+- SPA routing is handled via `nginx.conf` (redirects all routes to `index.html`)
+
+---
 
 ## Available Scripts
 
@@ -60,10 +113,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 ### Advanced Configuration
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
 ### `npm run build` fails to minify
 
