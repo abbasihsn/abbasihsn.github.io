@@ -30,6 +30,9 @@ export default function MyVoiceQuiz() {
     if (String(mode) === '1') {
       // one select for letter notes like C3, D3
       setUserAnswer(['']);
+    } else if (String(mode) === '2') {
+      // two-note patterns always start with 'do'; don't ask user for it
+      setUserAnswer(['do', '']);
     } else {
       // solfege answers
       setUserAnswer(new Array(Number(mode)).fill(''));
@@ -143,6 +146,8 @@ export default function MyVoiceQuiz() {
     setFeedback('');
     if (String(mode) === '1') {
       setUserAnswer(['']);
+    } else if (String(mode) === '2') {
+      setUserAnswer(['do', '']);
     } else {
       setUserAnswer(new Array(Number(mode)).fill(''));
     }
@@ -202,19 +207,29 @@ export default function MyVoiceQuiz() {
           </div>
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            {userAnswer.map((value, idx) => (
-              <select
-                key={idx}
-                value={value}
-                onChange={(e) => onAnswerChange(idx, e.target.value)}
-                disabled={hasSubmitted}
-              >
-                <option value="">?</option>
-                {(String(mode) === '1' ? letterOptions : solfegeOptions).map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            ))}
+            {userAnswer.map((value, idx) => {
+              const isFixedDo = String(mode) === '2' && idx === 0;
+              if (isFixedDo) {
+                return (
+                  <select key={idx} value="do" disabled>
+                    <option value="do">do</option>
+                  </select>
+                );
+              }
+              return (
+                <select
+                  key={idx}
+                  value={value}
+                  onChange={(e) => onAnswerChange(idx, e.target.value)}
+                  disabled={hasSubmitted}
+                >
+                  <option value="">?</option>
+                  {(String(mode) === '1' ? letterOptions : solfegeOptions).map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              );
+            })}
             <button
               onClick={submitAnswer}
               disabled={!isAnswerComplete() || hasSubmitted}
