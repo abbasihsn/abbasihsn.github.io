@@ -1,6 +1,7 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import PianoQuiz from './components/PianoQuiz';
+import PianoQuizPage from './pages/PianoQuizPage';
 import PatternLibrary from './components/PatternLibrary';
 
 function App() {
@@ -29,23 +30,7 @@ function App() {
 
   if (isQuizRoute) {
     return (
-      <div className="App">
-        <section className="piano-quiz">
-          <div className="about-container">
-            <h2>Piano Notes Quiz</h2>
-            <PianoQuiz />
-          </div>
-        </section>
-        <section className="pattern-library">
-          <div className="about-container">
-            <h2>Learn: All Patterns</h2>
-            <PatternLibrary />
-          </div>
-        </section>
-        <footer>
-          <p>© 2025 Hasan Abbasi. All rights reserved.</p>
-        </footer>
-      </div>
+      <PianoQuizPage />
     );
   }
 
